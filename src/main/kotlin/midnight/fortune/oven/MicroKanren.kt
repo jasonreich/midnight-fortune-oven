@@ -11,7 +11,11 @@ data class Var private constructor(val index: Int) {
 }
 
 typealias Subst = Map<Var, Term>
-data class State(val substitions: Subst, val nextVar: Var)
+data class State private constructor(val substitions: Subst, val nextVar: Var) {
+    companion object {
+        val ZERO = State(emptyMap(), Var.ZERO)
+    }
+}
 typealias Goal = (State) -> Sequence<State>
 
 sealed class Term {

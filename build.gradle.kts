@@ -36,3 +36,7 @@ application {
     // Define the main class for the application.
     mainClassName = "midnight.fortune.oven.AppKt"
 }
+
+tasks.test {
+    testLogging.showStandardStreams = true
+}

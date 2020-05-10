@@ -11,4 +11,12 @@ class AppTest {
         val classUnderTest = App()
         assertNotNull(classUnderTest.greeting, "app should have a greeting")
     }
+
+    @Test fun fives() {
+        MicroKanren.run { 
+            fresh { x ->
+                x eq Term.TAtom("5")
+            }
+        }.invoke(State.ZERO).take(1).toList().also(::println)
+    }
 }
