@@ -6,6 +6,8 @@ data class Var private constructor(val index: Int) {
     }
 
     fun next() = Var(index = index + 1)
+
+    val term = Term.TVar(this)
 }
 
 typealias Subst = Map<Var, Term>
@@ -43,5 +45,9 @@ object MicroKanren {
         unify(this, other, state.substitions)?.let { newSubstitions ->
             sequenceOf(state.copy(newSubstitions))
         } ?: emptySequence()
+    }
+
+    fun fresh(action: (Term) -> Goal): Goal = { state ->
+        action(state.nextVar.term)(state.copy(nextVar = state.nextVar.next()))
     }
 }
