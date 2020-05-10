@@ -16,13 +16,16 @@ sealed class Term {
     }
 })
 
-fun unifyWith(_left: Term, _right: Term, substitions: Subst): Subst? {
+fun unify(_left: Term, _right: Term, substitions: Subst): Subst? {
     return when (val left = _left.walk(substitions)) {
         is Term.TAtom -> when (val right = _right.walk(substitions)) {
             is Term.TAtom -> substitions.takeIf { left.value == right.value }
             is Term.TVar -> substitions + (right.variable to left)
         }
-        is Term.TVar -> TODO()
+        is Term.TVar -> when (val right = _right.walk(substitions)) {
+            is Term.TAtom -> substitions + (left.variable to right)
+            is Term.TVar -> null
+        }
     }
 }
 
