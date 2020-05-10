@@ -1,7 +1,15 @@
 package midnight.fortune.oven
 
-data class Var(val index: Int)
+data class Var private constructor(val index: Int) {
+    companion object {
+        val ZERO = Var(index = 0)
+    }
+
+    fun next() = Var(index = index + 1)
+}
+
 typealias Subst = Map<Var, Term>
+data class State(val substitions: Subst, val nextVar: Var)
 
 sealed class Term {
     abstract fun walk(substitions: Subst): Term
@@ -11,10 +19,10 @@ sealed class Term {
     }
     
     data class TVar(val variable: Var): Term() {
-        override fun walk(substitions: Subst) = 
-            substitions[variable]?.walk(substitions) ?: this]
+        override fun walk(substitions: Subst) =
+            substitions[variable]?.walk(substitions) ?: this
     }
-})
+}
 
 fun unify(_left: Term, _right: Term, substitions: Subst): Subst? {
     return when (val left = _left.walk(substitions)) {
