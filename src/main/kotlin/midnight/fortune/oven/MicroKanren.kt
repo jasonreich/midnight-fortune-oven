@@ -5,29 +5,26 @@ typealias Subst = Map<Var, Term>
 
 sealed class Term {
     abstract fun walk(substitions: Subst): Term
-    abstract fun unifyWith(other: Term, substitions: Subst): Subst?
 
     data class TAtom(val value: String): Term() {
         override fun walk(substitions: Subst) = this
-
-        override fun unifyWith(other: Term, substitions: Subst): Subst?
-            = when (other) {
-                is TAtom -> substitions.takeIf { this.value == other.value }
-                is TVar -> mapOf(other.variable to this) + substitions
-            }
     }
     
     data class TVar(val variable: Var): Term() {
         override fun walk(substitions: Subst) = 
             substitions[variable]?.walk(substitions) ?: this]
-
-        override fun unifyWith(other: Term, substitions: Subst): Subst?
-            = when (other) {
-                is TVar -> substitions.takeIf { this.variable == other.variable }
-                is TAtom -> mapOf(this.variable to other) + substitions
-            }
     }
 })
+
+fun unifyWith(_left: Term, _right: Term, substitions: Subst): Subst? {
+    return when (val left = _left.walk(substitions)) {
+        is Term.TAtom -> when (val right = _right.walk(substitions)) {
+            is Term.TAtom -> substitions.takeIf { left.value == right.value }
+            is Term.TVar -> substitions + (right.variable to left)
+        }
+        is Term.TVar -> TODO()
+    }
+}
 
 class MicroKanren(
     val state: Map<Int, Int>
