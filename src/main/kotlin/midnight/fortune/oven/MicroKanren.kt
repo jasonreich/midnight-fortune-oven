@@ -50,4 +50,12 @@ object MicroKanren {
     fun fresh(action: (Term) -> Goal): Goal = { state ->
         action(state.nextVar.term)(state.copy(nextVar = state.nextVar.next()))
     }
+
+    infix fun Goal.disj(other: Goal): Goal = { state ->
+        TODO()
+    }
+
+    infix fun Goal.conj(other: Goal): Goal = { state ->
+        this(state).flatMap(other)
+    }
 }
