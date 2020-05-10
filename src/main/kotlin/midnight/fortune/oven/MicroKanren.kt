@@ -40,6 +40,11 @@ fun unify(_left: Term, _right: Term, substitions: Subst): Subst? {
     }
 }
 
+infix fun <T> Sequence<T>.interleave(other: Sequence<T>) = 
+    this.zip(other).flatMap { (left, right) -> 
+        sequenceOf(left, right)
+    }
+
 object MicroKanren {
     infix fun Term.eq(other: Term): Goal = { state ->
         unify(this, other, state.substitions)?.let { newSubstitions ->
@@ -52,7 +57,7 @@ object MicroKanren {
     }
 
     infix fun Goal.disj(other: Goal): Goal = { state ->
-        TODO()
+        this(state) interleave other(state)
     }
 
     infix fun Goal.conj(other: Goal): Goal = { state ->
