@@ -15,8 +15,8 @@ class AppTest {
     @Test fun fives() {
         MicroKanren.run { 
             fresh { x ->
-                x eq Term.TAtom("5")
+                (x eq Term.TAtom("5")) disj (x eq Term.TAtom("10"))
             }
-        }.invoke(State.ZERO).take(1).toList().also(::println)
+        }.invoke(State.ZERO).take(10).toList().also(::println)
     }
 }
