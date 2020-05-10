@@ -10,6 +10,7 @@ data class Var private constructor(val index: Int) {
 
 typealias Subst = Map<Var, Term>
 data class State(val substitions: Subst, val nextVar: Var)
+typealias Goal = (State) -> Sequence<State>
 
 sealed class Term {
     abstract fun walk(substitions: Subst): Term
@@ -37,8 +38,10 @@ fun unify(_left: Term, _right: Term, substitions: Subst): Subst? {
     }
 }
 
-class MicroKanren(
-    val state: Map<Int, Int>
-) {
-    
+object MicroKanren {
+    infix fun Term.eq(other: Term): Goal = { state ->
+        unify(this, other, state.substitions)?.let { newSubstitions ->
+            sequenceOf(state.copy(newSubstitions))
+        } ?: emptySequence()
+    }
 }
